@@ -11,6 +11,7 @@ int initialize() {
   lx=LX;
   call=0;
   nsites=NSITES;
+  twonsites=2*nsites;
   beta=BETA;
   dtau=DTAU;
   M=(int)(beta/dtau);
@@ -40,9 +41,9 @@ int initialize() {
 
   init_genrand(25);
 
-  phi=(dcomplex *)malloc(nf*sizeof(double));
-  X=(dcomplex *)malloc(nf*sizeof(double));
-  X_old=(dcomplex*)malloc(nf*sizeof(double));
+  phi=(dcomplex *)malloc(nf*sizeof(dcomplex));
+  X=(dcomplex *)malloc(nf*sizeof(dcomplex));
+  X_old=(dcomplex*)malloc(nf*sizeof(dcomplex));
   pcopy=(double *)malloc(nf*sizeof(double));
   xcopy=(double *)malloc(nf*sizeof(double));
   L_pcg=(double *)malloc(nf*sizeof(double));
@@ -57,15 +58,15 @@ int initialize() {
   R=(dcomplex *)malloc(nf*sizeof(dcomplex));
   aux_ns=(dcomplex*)malloc(nsites*sizeof(dcomplex));
   p_mom=(double *)malloc(nf*sizeof(double));
-  rowIndex_kxa=malloc((nsites+1)*sizeof(int));
-  rowIndex_kxb=malloc((nsites+1)*sizeof(int));
-  cols_kxa=malloc(2*nsites*sizeof(int));
-  cols_kxb=malloc(2*nsites*sizeof(int));
+  rowIndex_kxa=(int*)malloc((nsites+1)*sizeof(int));
+  rowIndex_kxb=(int*)malloc((nsites+1)*sizeof(int));
+  cols_kxa=(int*)malloc(2*nsites*sizeof(int));
+  cols_kxb=(int*)malloc(2*nsites*sizeof(int));
 
-  acsr_kxa=(dcomplex *)malloc(nf*2*sizeof(dcomplex));
-  acsr_kxb=(dcomplex *)malloc(nf*2*sizeof(dcomplex));
+  acsr_kxa=(dcomplex *)calloc(nf*2,sizeof(dcomplex));
+  acsr_kxb=(dcomplex *)calloc(nf*2,sizeof(dcomplex));
 
-  rand_norm_vec(x_hs,nf,0.0,sqrt(2.0/dtau));
+  //rand_norm_vec(x_hs,nf,0.0,sqrt(2.0/dtau));
   //init_sparse();
 
 }
@@ -93,39 +94,58 @@ void init_sparse(){
   }
   rowIndex_kxa[nsites]=ctr;
   rowIndex_kxb[nsites]=ctr;
+  for(i=0;i<2*nf;i++){
+    acsr_kxa[i].imag=acsr_kxa[i].real=0;
+    acsr_kxb[i].imag=acsr_kxb[i].real=0;
+  }
 }
 //populate the hs-field dependent KE matrix
 void make_sparse(){
-  int ctr=0;
   int nbr;
   int link;
   int j;
   int i;
+  int ctr;
   for(j=0; j<M; j++){
+    ctr=0;
+    printf("\nblock=%d\n",j);
     for(i=0;i<nsites;i++){
+      nbr=(i%2==0)?(i+1)%lx:(lx+i-1)%lx;
       link=(i%2==0)?i:nbr;
-      acsr_kxa[M*nsites+ctr].real=cos(dtau*x_hs[link]/2.0);
-      ctr++;
+      acsr_kxa[j*twonsites+ctr].real=cosh(dtau*x_hs[j*nsites+link]/2.0);
+      //printf("da %d %d %f \n",i,link,acsr_kxa[j*nsites+ctr].real);
+      //printf("cols_kxa %d \n", cols_kxa[ctr]);
+      //printf("rowIndex_kxa %d \n", rowIndex_kxa[ctr]);
+
+      nbr=(i%2==1)?(i+1)%lx:(lx+i-1)%lx;
       link=(i%2==1)?i:nbr;
-      acsr_kxb[M*nsites+ctr].real=cos(dtau*x_hs[link]/2.0);
+      acsr_kxb[j*twonsites+ctr].real=cosh(dtau*x_hs[j*nsites+link]/2.0);
+      printf("db %d %d %f + i %f\n",i,link,acsr_kxb[j*twonsites+ctr].real,acsr_kxb[j*twonsites+ctr].imag);
+      printf("cols_kxb %d %d \n", ctr, cols_kxb[ctr]);
+      //printf("rowIndex_kxb %d \n", rowIndex_kxb[ctr]);
       ctr++;
 
       nbr=(i%2==0)?(i+1)%lx:(lx+i-1)%lx;
       link=(i%2==0)?i:nbr;
       if(i%2==0)
-        acsr_kxa[M*nsites+ctr].imag=-sinh(dtau*x_hs[link]/2.0);
+        acsr_kxa[j*twonsites+ctr].imag=-sinh(dtau*x_hs[j*nsites+link]/2.0);
       else
-        acsr_kxa[M*nsites+ctr].imag=sinh(dtau*x_hs[link]/2.0);
+        acsr_kxa[j*twonsites+ctr].imag=+sinh(dtau*x_hs[j*nsites+link]/2.0);
 
       nbr=(i%2==1)?(i+1)%lx:(lx+i-1)%lx;
       link=(i%2==1)?i:nbr;
-      if(i%2==0)
-        acsr_kxb[M*nsites+ctr].imag=-sinh(dtau*x_hs[link]/2.0);
+      if(i%2==1)
+        acsr_kxb[j*twonsites+ctr].imag=-sinh(dtau*x_hs[j*nsites+link]/2.0);
       else
-        acsr_kxb[M*nsites+ctr].imag=sinh(dtau*x_hs[link]/2.0);
+        acsr_kxb[j*twonsites+ctr].imag=+sinh(dtau*x_hs[j*nsites+link]/2.0);
+      //printf("ob %d %d %f %f\n",i,link,acsr_kxb[j*nsites+ctr].imag,x_hs[j*nsites+link]);
+      printf("ob %d %d %f + i %f \n",i,link,acsr_kxb[j*twonsites+ctr].real,acsr_kxb[j*twonsites+ctr].imag);
+      printf("cols_kxb %d %d \n", ctr, cols_kxb[ctr]);
+      //printf("rowIndex_kxb %d \n", rowIndex_kxb[ctr]);
 
       ctr++;
     }
+    getchar();
   }
 }
 void free_all(){

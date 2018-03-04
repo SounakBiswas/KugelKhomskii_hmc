@@ -11,6 +11,7 @@
 #define MCS 10000
 #define IFPRECON 1
 #define zcsrsymv mkl_cspblas_zcsrsymv
+#define zcsrgemv mkl_cspblas_zcsrgemv
 #define dcomplex MKL_Complex16
 //typedef struct {double re; double im;} dcomplex;
 
@@ -19,6 +20,7 @@ double dt;
 double dtby2;
 double twodt;
 int nsites,nf,M;
+int twonsites;
 double beta;
 double dtau;
 double corr_fn;

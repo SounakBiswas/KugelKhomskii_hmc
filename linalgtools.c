@@ -13,9 +13,10 @@
 
 //y=M**T x
 //thse routines multiply M and MT using the checkerboard decomposition
-void MTx(dcomplex *x,dcomplex *y){
+void MDx(dcomplex *x,dcomplex *y){
   int block;
   int ione=1;
+  char iftransp[1]={'N'};
   dcomplex minusone;
   dcomplex one;
   minusone.real=-1.0;
@@ -23,13 +24,13 @@ void MTx(dcomplex *x,dcomplex *y){
   one.real=1.0;
   one.imag=0.0;
   for(block=0;block<(M-1);block++){
-    zcsrsymv("L",&nsites, acsr_kxb+block*nsites,rowIndex_kxb, cols_kxb, x+(block+1)*nsites, aux_ns);
-    zcsrsymv("L",&nsites, acsr_kxa+block*nsites,rowIndex_kxa, cols_kxa, aux_ns, y+block*nsites);
+    zcsrgemv(iftransp,&nsites, acsr_kxb+block*twonsites,rowIndex_kxb, cols_kxb, x+(block+1)*nsites, aux_ns);
+    zcsrgemv(iftransp,&nsites, acsr_kxa+block*twonsites,rowIndex_kxa, cols_kxa, aux_ns, y+block*nsites);
     zscal (&nsites, &minusone, y+block*nsites, &ione);
     zaxpy (&nsites, &one, x+block*nsites,&ione, y+block*nsites, &ione);
   }
-  zcsrsymv("L",&nsites, acsr_kxb +(M-1)*nsites,rowIndex_kxb, cols_kxb, x, aux_ns);
-  zcsrsymv("L",&nsites, acsr_kxa +(M-1)*nsites,rowIndex_kxa, cols_kxa, aux_ns,y+(M-1)*nsites);
+  zcsrgemv(iftransp,&nsites, acsr_kxb +(M-1)*twonsites,rowIndex_kxb, cols_kxb, x, aux_ns);
+  zcsrgemv(iftransp,&nsites, acsr_kxa +(M-1)*twonsites,rowIndex_kxa, cols_kxa, aux_ns,y+(M-1)*nsites);
   zscal(&nsites, &one, y+(M-1)*nsites, &ione);
   zaxpy(&nsites, &one, x+(M-1)*nsites, &ione, y+(M-1)*nsites, &ione);
 }
@@ -37,18 +38,19 @@ void Mx(dcomplex *x,dcomplex *y){
   int block;
   int i;
   int ione=1;
+  char iftransp[1]={'N'};
   dcomplex minusone;
   dcomplex one;
   minusone.real=-1.0;
   minusone.imag=0.0;
   one.real=1.0;
   one.imag=0.0;
-  zcsrsymv("L", &nsites, acsr_kxa+M*nsites, rowIndex_kxa, cols_kxa,x+(M-1)*nsites,aux_ns);
-  zcsrsymv("L", &nsites, acsr_kxb+M*nsites, rowIndex_kxb, cols_kxb,aux_ns,y);
+  zcsrgemv(iftransp, &nsites, acsr_kxa+(M-1)*twonsites, rowIndex_kxa, cols_kxa,x+(M-1)*nsites,aux_ns);
+  zcsrgemv(iftransp, &nsites, acsr_kxb+(M-1)*twonsites, rowIndex_kxb, cols_kxb,aux_ns,y);
   zaxpy(&nsites, &one, x, &ione, y, &ione);
   for(block=1;block<M;block++){
-    zcsrsymv ("L",&nsites, acsr_kxa+(block-1)*nsites,rowIndex_kxa, cols_kxa,x+(block-1)*nsites,aux_ns);
-    zcsrsymv ("L",&nsites, acsr_kxb+(block-1)*nsites,rowIndex_kxb, cols_kxb, aux_ns, y+block*nsites);
+    zcsrgemv (iftransp,&nsites, acsr_kxa+(block-1)*twonsites,rowIndex_kxa, cols_kxa,x+(block-1)*nsites,aux_ns);
+    zcsrgemv (iftransp,&nsites, acsr_kxb+(block-1)*twonsites,rowIndex_kxb, cols_kxb, aux_ns, y+block*nsites);
     zscal (&nsites, &minusone, y+block*nsites,&ione);
     zaxpy (&nsites, &one ,x+block*nsites, &ione, y+block*nsites, &ione);
   }
@@ -67,9 +69,9 @@ void Mx(dcomplex *x,dcomplex *y){
 //  }
 //}
 
-void MTMx(dcomplex *x,dcomplex *y){
+void MDMx(dcomplex *x,dcomplex *y){
   Mx(x,aux_mtmx_nf);
-  MTx(aux_mtmx_nf,y);
+  MDx(aux_mtmx_nf,y);
 }
 //calc_force= -dV/dx
 

@@ -1,7 +1,8 @@
-#include "mt19937ar.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include "global.h"
+#include <stdlib.h> 
+#include <stdio.h> 
 #include <math.h>
+#include "mt19937ar.h"
 // Generates Gaussian Random numbers
 // Based on Marsaglia algorithm on wikipedia :https://en.wikipedia.org/wiki/Marsaglia_polar_method 
 
@@ -33,5 +34,12 @@ void rand_norm_vec(double *vec,int dim,double mean,double var){
   int i;
   for(i=0;i<dim;i++){
     vec[i]=genrand_gauss(mean,var);
+  }
+}
+void rand_norm_cvec(dcomplex *vec,int dim,double mean,double var){
+  int i;
+  for(i=0;i<dim;i++){
+    vec[i].real=genrand_gauss(mean,var);
+    vec[i].imag=genrand_gauss(mean,var);
   }
 }
