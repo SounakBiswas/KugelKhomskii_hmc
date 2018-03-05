@@ -108,7 +108,7 @@ void make_sparse(){
   int ctr;
   for(j=0; j<M; j++){
     ctr=0;
-    printf("\nblock=%d\n",j);
+    //printf("\nblock=%d\n",j);
     for(i=0;i<nsites;i++){
       nbr=(i%2==0)?(i+1)%lx:(lx+i-1)%lx;
       link=(i%2==0)?i:nbr;
@@ -120,8 +120,8 @@ void make_sparse(){
       nbr=(i%2==1)?(i+1)%lx:(lx+i-1)%lx;
       link=(i%2==1)?i:nbr;
       acsr_kxb[j*twonsites+ctr].real=cosh(dtau*x_hs[j*nsites+link]/2.0);
-      printf("db %d %d %f + i %f\n",i,link,acsr_kxb[j*twonsites+ctr].real,acsr_kxb[j*twonsites+ctr].imag);
-      printf("cols_kxb %d %d \n", ctr, cols_kxb[ctr]);
+      //printf("db %d %d %f + i %f\n",i,link,acsr_kxb[j*twonsites+ctr].real,acsr_kxb[j*twonsites+ctr].imag);
+      //printf("cols_kxb %d %d \n", ctr, cols_kxb[ctr]);
       //printf("rowIndex_kxb %d \n", rowIndex_kxb[ctr]);
       ctr++;
 
@@ -139,13 +139,13 @@ void make_sparse(){
       else
         acsr_kxb[j*twonsites+ctr].imag=+sinh(dtau*x_hs[j*nsites+link]/2.0);
       //printf("ob %d %d %f %f\n",i,link,acsr_kxb[j*nsites+ctr].imag,x_hs[j*nsites+link]);
-      printf("ob %d %d %f + i %f \n",i,link,acsr_kxb[j*twonsites+ctr].real,acsr_kxb[j*twonsites+ctr].imag);
-      printf("cols_kxb %d %d \n", ctr, cols_kxb[ctr]);
+      //printf("ob %d %d %f + i %f \n",i,link,acsr_kxb[j*twonsites+ctr].real,acsr_kxb[j*twonsites+ctr].imag);
+      //printf("cols_kxb %d %d \n", ctr, cols_kxb[ctr]);
       //printf("rowIndex_kxb %d \n", rowIndex_kxb[ctr]);
 
       ctr++;
     }
-    getchar();
+    //getchar();
   }
 }
 void free_all(){

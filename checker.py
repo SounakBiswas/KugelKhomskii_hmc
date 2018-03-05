@@ -52,7 +52,7 @@ def makesmat(block) :
   #print "expKb"
   #print LA.expm(dtau*0.5*Kb)
   #print"sparse"
-  mat=np.dot(LA.expm(dtau*0.5*Ka),LA.expm(dtau*0.5*Kb))
+  mat=np.dot(LA.expm(dtau*0.5*Kb),LA.expm(dtau*0.5*Ka))
   return mat
 
 row=np.zeros(nelem)
@@ -86,49 +86,53 @@ for i in range (0,ns):
     col[ctr]=(M-1)*ns+j;
     data[ctr]=mat[i,j]
     ctr+=1
+def zcg (A,x,b) :
+  r=b-A.dot(x);
+  p=r
+  rold=np.dot(r.conjugate(),r)
+  k=0
+  print "init norm=",np.dot(r.conjugate(),r)
+  while(True) :
+    Ap=A.dot(p)
+    alpha=rold/np.dot(p.conjugate(),Ap)
+    print "rold",rold," alpha",alpha
+    x=x+alpha*p
+    r=r-alpha*Ap
+    rnew=np.dot(r.conjugate(),r)
+    print "iter=",k, "norm=",rnew
+    sys.stdin.read(1)
+    if(rnew<10e-6) :
+      break;
+    beta=rnew/rold
+    print "beta=",beta
+    rold=rnew
+#    np.savetxt("temp_prev.dat",p)
+#    np.savetxt("temp_scaled.dat",beta*p)
+#    p=r+beta*p
+#    np.savetxt("temp.dat",p)
+#    np.savetxt("tempx.dat",r)
+#    print "saved"
+#    sys.stdin.read(1)
+    k+=1
+
 Mat=sp.coo_matrix((data,(row,col)),shape=(nf,nf),dtype=complex)
 Mat=Mat.tocsr();
-MatT=Mat.transpose();
-MatT=MatT.conjugate();
-vec2=Mat.dot(vec)
-vec3=MatT.dot(vec2)
-np.savetxt("vec4r.dat",np.real(vec3))
-np.savetxt("vec4i.dat",np.imag(vec3))
-np.savetxt("vec2r.dat",np.real(vec2))
-np.savetxt("vec2i.dat",np.imag(vec2))
-#vec3=(Mat.transpose()).dot(vec)
-#np.savetxt("vec3.dat",vec3)
-#MTM=np.dot(Mat.transpose(),Mat)
-#MTMI=sLA.inv(MTM)
-#vec4=(MTMI).dot(vec)
-#np.savetxt("vec4.dat",vec4)
-#exhs2=np.zeros(nf);
-##exhs2[4]=math.exp(-dtau*root2U*xhs[4]);
-#exhs2[5]=math.exp(-dtau*root2U*xhs[5]);
-#
-#row=np.zeros(nelem)
-#col=np.zeros(nelem)
-#data=np.zeros(nelem)
-#ctr=0;
-#for t in range(1,M) :
-#  mat2=np.dot(mat,np.diag(exhs2[ns*(t-1):ns*t]))
-#  for i in range (0,ns): 
-#    for j in range (0,ns) : 
-#      row[ctr]=t*ns+i;
-#      col[ctr]=(t-1)*ns+j;
-#      data[ctr]=-mat2[i,j]
-#      ctr+=1
-#
-#t=0      
-#mat2=np.dot(mat,np.diag(exhs2[ns*(M-1):]))
-#for i in range (0,ns): 
-#  for j in range (0,ns) : 
-#    row[ctr]=t*ns+i;
-#    col[ctr]=(M-1)*ns+j;
-#    data[ctr]=mat2[i,j]
-#    ctr+=1
-#Mat=sp.coo_matrix((data,(row,col)),shape=(nf,nf),dtype='float')
-#vec5=Mat.dot(vec)
-#np.savetxt("vec5.dat",vec5)
-#print exhs2
+MatD=Mat.transpose();
+MatD=MatD.conjugate();
+MDM=MatD.dot(Mat)
+dMDM=MDM.todense();
+dMDMI=LA.inv(dMDM)
+vec3=dMDMI.dot(vec)
+#e,v=LA.eigh(dMDM)
+#print e
+#zcg(MDM,np.zeros(nf,dtype=complex),vec)
+#vec2=Mat.dot(vec)
+#vec3=MatD.dot(vec2)
+np.savetxt("vec4py.dat",vec3)
+#np.savetxt("vec4i.dat",np.imag(vec3))
+#np.savetxt("vec2r.dat",np.real(vec2))
+#np.savetxt("vec2i.dat",np.imag(vec2))
+
+
+
 

@@ -54,22 +54,30 @@ void main(){
   job[2]=0;
   job[3]=2;
   MKL_INT info;
-  mkl_zdnscsr(job,&nsites, &nsites, dense, &nsites, acsr_kxb+(0)*twonsites,cols_kxb,rowIndex_kxb,&info);
-  for(i=0; i<nsites; i++){
-    for(j=0; j<nsites; j++)
-      printf("%f+i%f\t",dense[i+j*nsites].real,dense[i+j*nsites].imag);
-    printf("\n");
-  }
-  getchar();
-  mkl_zdnscsr(job,&nsites, &nsites, dense, &nsites, acsr_kxa+(0)*twonsites,cols_kxa,rowIndex_kxa,&info);
-  for(i=0; i<nsites; i++){
-    for(j=0; j<nsites; j++)
-      printf("%f+i%f\t",dense[i+j*nsites].real,dense[i+j*nsites].imag);
-    printf("\n");
-  }
-  getchar();
+  //mkl_zdnscsr(job,&nsites, &nsites, dense, &nsites, acsr_kxb+(0)*twonsites,cols_kxb,rowIndex_kxb,&info);
+  //for(i=0; i<nsites; i++){
+  //  for(j=0; j<nsites; j++)
+  //    printf("%f+i%f\t",dense[i+j*nsites].real,dense[i+j*nsites].imag);
+  //  printf("\n");
+  //}
+  //getchar();
+  //mkl_zdnscsr(job,&nsites, &nsites, dense, &nsites, acsr_kxa+(0)*twonsites,cols_kxa,rowIndex_kxa,&info);
+  //for(i=0; i<nsites; i++){
+  //  for(j=0; j<nsites; j++)
+  //    printf("%f+i%f\t",dense[i+j*nsites].real,dense[i+j*nsites].imag);
+  //  printf("\n");
+  //}
+  //getchar();
 
-  MTMx(phi,aux1_nf);
+  for(i=0;i<nf;i++)
+    aux1_nf[i].real=aux1_nf[i].imag=0;
+  //MDMx(phi,aux1_nf);
+  //printf("enter conj grad\n");
+  //dcomplex tvar;
+  //zdotc(&tvar, &nf, phi,&ione, phi, &ione);
+  //double t2=dznrm2(&nf, phi,&ione);
+  //printf("%f %f %f\n",t2,tvar.real, tvar.imag);
+  zconj_grad(aux1_nf,phi);
   fp=fopen("vect.dat","w");
   for(i=0;i<nf;i++)
     fprintf(fp,"%lf\t%lf\n",phi[i].real,phi[i].imag);
