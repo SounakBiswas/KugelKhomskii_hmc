@@ -67,10 +67,10 @@ void Mprimebx(dcomplex *x,dcomplex *y){
   one.real=1.0;
   one.imag=0.0;
   zcsrgemv(iftransp, &nsites, acsr_kxa+(M-1)*twonsites, rowIndex_kxa, cols_kxa,x+(M-1)*nsites,aux_ns);
-  zcsrgemv(iftransp, &nsites, acsr_kxb+(M-1)*twonsites, rowIndex_kxb, cols_kxb,aux_ns,y);
+  zcsrgemv(iftransp, &nsites, acsr_kxbp+(M-1)*twonsites, rowIndex_kxb, cols_kxb,aux_ns,y);
   for(block=1;block<M;block++){
     zcsrgemv (iftransp,&nsites, acsr_kxa+(block-1)*twonsites,rowIndex_kxa, cols_kxa,x+(block-1)*nsites,aux_ns);
-    zcsrgemv (iftransp,&nsites, acsr_kxb+(block-1)*twonsites,rowIndex_kxb, cols_kxb, aux_ns, y+block*nsites);
+    zcsrgemv (iftransp,&nsites, acsr_kxbp+(block-1)*twonsites,rowIndex_kxb, cols_kxb, aux_ns, y+block*nsites);
   }
 }
 void Mprimeax(dcomplex *x,dcomplex *y){
@@ -84,11 +84,11 @@ void Mprimeax(dcomplex *x,dcomplex *y){
   minusone.imag=0.0;
   one.real=1.0;
   one.imag=0.0;
-  zcsrgemv(iftransp, &nsites, acsr_kxb+(M-1)*twonsites, rowIndex_kxb, cols_kxb,aux_ns,y);
-  zcsrgemv(iftransp, &nsites, acsr_kxa+(M-1)*twonsites, rowIndex_kxa, cols_kxa,x+(M-1)*nsites,aux_ns);
+  zcsrgemv(iftransp, &nsites, acsr_kxb+(M-1)*twonsites, rowIndex_kxb, cols_kxb,x+(M-1)*nsites,aux_ns);
+  zcsrgemv(iftransp, &nsites, acsr_kxap+(M-1)*twonsites, rowIndex_kxa, cols_kxa,aux_ns,y);
   for(block=1;block<M;block++){
     zcsrgemv (iftransp,&nsites, acsr_kxb+(block-1)*twonsites,rowIndex_kxb, cols_kxb,x+(block-1)*nsites,aux_ns);
-    zcsrgemv (iftransp,&nsites, acsr_kxa+(block-1)*twonsites,rowIndex_kxa, cols_kxa, aux_ns, y+block*nsites);
+    zcsrgemv (iftransp,&nsites, acsr_kxap+(block-1)*twonsites,rowIndex_kxa, cols_kxa, aux_ns, y+block*nsites);
   }
 }
 //void Mxprime(double*x,double *y,int sigma){

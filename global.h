@@ -69,6 +69,9 @@ dcomplex *X;
 //Checkerboard decomposition of inverse Green function matrics
 dcomplex *acsr_kxa;
 dcomplex *acsr_kxb;
+dcomplex *acsr_kxbp;
+dcomplex *acsr_kxap;
+dcomplex *basis1;
 int *rowIndex_kxa;
 int *rowIndex_kxb;
 int *cols_kxa;

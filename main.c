@@ -77,7 +77,8 @@ void main(){
   //zdotc(&tvar, &nf, phi,&ione, phi, &ione);
   //double t2=dznrm2(&nf, phi,&ione);
   //printf("%f %f %f\n",t2,tvar.real, tvar.imag);
-  zconj_grad(aux1_nf,phi);
+  //zconj_grad(aux1_nf,phi);
+  calc_deriv(aux1_nf,phi);
   fp=fopen("vect.dat","w");
   for(i=0;i<nf;i++)
     fprintf(fp,"%lf\t%lf\n",phi[i].real,phi[i].imag);

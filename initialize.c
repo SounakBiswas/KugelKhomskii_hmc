@@ -65,6 +65,9 @@ int initialize() {
 
   acsr_kxa=(dcomplex *)calloc(nf*2,sizeof(dcomplex));
   acsr_kxb=(dcomplex *)calloc(nf*2,sizeof(dcomplex));
+  acsr_kxap=(dcomplex *)calloc(nf*2,sizeof(dcomplex));
+  acsr_kxbp=(dcomplex *)calloc(nf*2,sizeof(dcomplex));
+  basis=(dcomplex *)calloc(nf*2,sizeof(dcomplex));
 
   //rand_norm_vec(x_hs,nf,0.0,sqrt(2.0/dtau));
   //init_sparse();
@@ -97,6 +100,7 @@ void init_sparse(){
   for(i=0;i<2*nf;i++){
     acsr_kxa[i].imag=acsr_kxa[i].real=0;
     acsr_kxb[i].imag=acsr_kxb[i].real=0;
+    basis[i].imag=basis[i].real=0;
   }
 }
 //populate the hs-field dependent KE matrix
@@ -113,6 +117,7 @@ void make_sparse(){
       nbr=(i%2==0)?(i+1)%lx:(lx+i-1)%lx;
       link=(i%2==0)?i:nbr;
       acsr_kxa[j*twonsites+ctr].real=cosh(dtau*x_hs[j*nsites+link]/2.0);
+      acsr_kxap[j*twonsites+ctr].real=0.5*dtau*sinh(dtau*x_hs[j*nsites+link]/2.0);
       //printf("da %d %d %f \n",i,link,acsr_kxa[j*nsites+ctr].real);
       //printf("cols_kxa %d \n", cols_kxa[ctr]);
       //printf("rowIndex_kxa %d \n", rowIndex_kxa[ctr]);
@@ -120,6 +125,7 @@ void make_sparse(){
       nbr=(i%2==1)?(i+1)%lx:(lx+i-1)%lx;
       link=(i%2==1)?i:nbr;
       acsr_kxb[j*twonsites+ctr].real=cosh(dtau*x_hs[j*nsites+link]/2.0);
+      acsr_kxbp[j*twonsites+ctr].real=0.5*dtau*sinh(dtau*x_hs[j*nsites+link]/2.0);
       //printf("db %d %d %f + i %f\n",i,link,acsr_kxb[j*twonsites+ctr].real,acsr_kxb[j*twonsites+ctr].imag);
       //printf("cols_kxb %d %d \n", ctr, cols_kxb[ctr]);
       //printf("rowIndex_kxb %d \n", rowIndex_kxb[ctr]);
@@ -127,17 +133,25 @@ void make_sparse(){
 
       nbr=(i%2==0)?(i+1)%lx:(lx+i-1)%lx;
       link=(i%2==0)?i:nbr;
-      if(i%2==0)
+      if(i%2==0){
         acsr_kxa[j*twonsites+ctr].imag=-sinh(dtau*x_hs[j*nsites+link]/2.0);
-      else
+        acsr_kxap[j*twonsites+ctr].imag=-dtau*0.5*cosh(dtau*x_hs[j*nsites+link]/2.0);
+      }
+      else{
         acsr_kxa[j*twonsites+ctr].imag=+sinh(dtau*x_hs[j*nsites+link]/2.0);
+        acsr_kxap[j*twonsites+ctr].imag=+0.5*dtau*cosh(dtau*x_hs[j*nsites+link]/2.0);
+      }
 
       nbr=(i%2==1)?(i+1)%lx:(lx+i-1)%lx;
       link=(i%2==1)?i:nbr;
-      if(i%2==1)
+      if(i%2==1){
         acsr_kxb[j*twonsites+ctr].imag=-sinh(dtau*x_hs[j*nsites+link]/2.0);
-      else
+        acsr_kxbp[j*twonsites+ctr].imag=-dtau*0.5*cosh(dtau*x_hs[j*nsites+link]/2.0);
+      }
+      else{
         acsr_kxb[j*twonsites+ctr].imag=+sinh(dtau*x_hs[j*nsites+link]/2.0);
+        acsr_kxbp[j*twonsites+ctr].imag=+dtau*0.5*cosh(dtau*x_hs[j*nsites+link]/2.0);
+      }
       //printf("ob %d %d %f %f\n",i,link,acsr_kxb[j*nsites+ctr].imag,x_hs[j*nsites+link]);
       //printf("ob %d %d %f + i %f \n",i,link,acsr_kxb[j*twonsites+ctr].real,acsr_kxb[j*twonsites+ctr].imag);
       //printf("cols_kxb %d %d \n", ctr, cols_kxb[ctr]);
