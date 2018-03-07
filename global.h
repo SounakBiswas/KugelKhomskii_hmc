@@ -7,7 +7,7 @@
 #define NSITES LX
 #define BETA 1
 #define T_FL 0.1
-#define WUP 1000
+#define WUP 100
 #define MCS 10000
 #define IFPRECON 1
 #define zcsrsymv mkl_cspblas_zcsrsymv
@@ -34,8 +34,14 @@ int ione;
 long long int accept;
 double givens_param[5];
 //fields
-dcomplex *phi;
-dcomplex *R;
+//dcomplex *phi;
+dcomplex *phiA;
+dcomplex *phiB;
+dcomplex *phiC;
+//dcomplex *R;
+dcomplex *RA;
+dcomplex *RB;
+dcomplex *RC;
 double *p_mom;
 double *x_hs;
 double *dVdx;
@@ -61,9 +67,15 @@ double *pcopy;
 double *xcopy;
 
 //O**(-1) Phi vectors
-dcomplex *X_old;
+//dcomplex *X_old;
+dcomplex *XA_old;
+dcomplex *XB_old;
+dcomplex *XC_old;
 //X= O**(-1) phi
-dcomplex *X;
+//dcomplex *X;
+dcomplex *XA;
+dcomplex *XB;
+dcomplex *XC;
 
 
 //Checkerboard decomposition of inverse Green function matrics
@@ -71,9 +83,11 @@ dcomplex *acsr_kxa;
 dcomplex *acsr_kxb;
 dcomplex *acsr_kxbp;
 dcomplex *acsr_kxap;
-dcomplex *basis1;
+dcomplex *acsr_basis;
 int *rowIndex_kxa;
 int *rowIndex_kxb;
+int *rowIndex_basis;
+int *cols_basis;
 int *cols_kxa;
 int *cols_kxb;
 

@@ -39,7 +39,10 @@ void rand_norm_vec(double *vec,int dim,double mean,double var){
 void rand_norm_cvec(dcomplex *vec,int dim,double mean,double var){
   int i;
   for(i=0;i<dim;i++){
-    vec[i].real=genrand_gauss(mean,var);
-    vec[i].imag=genrand_gauss(mean,var);
+    aux1_nf[i].real=genrand_gauss(mean,var);
+    aux1_nf[i].imag=0;
   }
+  char iftransp[1]={'N'};
+  zcsrgemv (iftransp, &nf, acsr_basis, rowIndex_basis, cols_basis, aux1_nf, vec);
+
 }

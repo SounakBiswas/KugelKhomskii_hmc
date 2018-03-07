@@ -31,30 +31,28 @@ void make_sparse();
 void main(){
   int i,j,k;
   initialize();
+  rand_norm_vec(x_hs,nf,0.0,sqrt(16.0/dtau));
+  init_basis();
   init_sparse();
-  dcomplex *dense;
-  dense=(dcomplex *)malloc(nsites*nsites*sizeof(dcomplex));
+  printf("wassup \n");
   FILE*fp;
-  fp=fopen("hs.dat","r");
-  for(i=0;i<nf;i++)
-    fscanf(fp,"%lf\n",&x_hs[i]);
-  fclose(fp);
-  fp=fopen("vecr.dat","r");
-  for(i=0;i<nf;i++)
-    fscanf(fp,"%lf\n",&phi[i].real);
-  fclose(fp);
-  fp=fopen("veci.dat","r");
-  for(i=0;i<nf;i++)
-    fscanf(fp,"%lf\n",&phi[i].imag);
-  fclose(fp);
-  make_sparse();
-  MKL_INT job[5];
-  job[0]=1;
-  job[1]=0;
-  job[2]=0;
-  job[3]=2;
-  MKL_INT info;
-  //mkl_zdnscsr(job,&nsites, &nsites, dense, &nsites, acsr_kxb+(0)*twonsites,cols_kxb,rowIndex_kxb,&info);
+  //fp=fopen("vecr.dat","r");
+  //for(i=0;i<nf;i++)
+  //  fscanf(fp,"%lf\n",&phi[i].real);
+  //fclose(fp);
+  //fp=fopen("veci.dat","r");
+  //for(i=0;i<nf;i++)
+  //  //fscanf(fp,"%lf\n",&phi[i].imag);
+  //  phi[i].imag=0;
+  //fclose(fp);
+  update_sparse();
+  for(i=0;i<WUP;i++){
+    printf("%d\n",i);
+    generate_fields();
+    //printf("gen fields done\n");
+    hamiltonian_evolution(0);
+  }
+  printf("avg cg iterations= %f\n", (double)(cgsteps)/(double)(1.0*(cg_ctr)));
   //for(i=0; i<nsites; i++){
   //  for(j=0; j<nsites; j++)
   //    printf("%f+i%f\t",dense[i+j*nsites].real,dense[i+j*nsites].imag);
@@ -78,14 +76,16 @@ void main(){
   //double t2=dznrm2(&nf, phi,&ione);
   //printf("%f %f %f\n",t2,tvar.real, tvar.imag);
   //zconj_grad(aux1_nf,phi);
-  calc_deriv(aux1_nf,phi);
-  fp=fopen("vect.dat","w");
-  for(i=0;i<nf;i++)
-    fprintf(fp,"%lf\t%lf\n",phi[i].real,phi[i].imag);
-  fclose(fp);
-  fp=fopen("vec3.dat","w");
-  for(i=0;i<nf;i++)
-    fprintf(fp,"%lf\t%lf\n",aux1_nf[i].real,aux1_nf[i].imag);
-  fclose(fp);
+  //calc_deriv(aux1_nf,phi);
+  //hamiltonian_evolution(0);
+  //
+  //fp=fopen("vect.dat","w");
+  //for(i=0;i<nf;i++)
+  //  fprintf(fp,"%lf\t%lf\n",phi[i].real,phi[i].imag);
+  //fclose(fp);
+  //fp=fopen("vec3.dat","w");
+  //for(i=0;i<nf;i++)
+  //  fprintf(fp,"%lf\t%lf\n",aux1_nf[i].real,aux1_nf[i].imag);
+  //fclose(fp);
 }
 

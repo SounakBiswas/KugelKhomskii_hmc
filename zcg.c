@@ -75,6 +75,8 @@ void zcg(int nd,dcomplex *sol, dcomplex *rhs, int * rci, int *ipar,double *dpar,
     ipar[2]=4;
     // Check if <rk,rk> is already small
     *rci=2;
+    if (ipar[3]==ipar[4])
+      *rci=0;
     return;
   }
   else if (ipar[2]==4){

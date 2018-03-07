@@ -109,6 +109,18 @@ void MDMx(dcomplex *x,dcomplex *y){
   Mx(x,aux_mtmx_nf);
   MDx(aux_mtmx_nf,y);
 }
+void zdrotm(dcomplex *X, dcomplex *X_old, double* givens_param){
+  int i;
+  dcomplex temp;
+  for(i=0; i<nf; i++){
+    temp=X[i];
+    X[i].real= 2*X[i].real - X_old[i].real;
+    X[i].imag= 2*X[i].imag - X_old[i].imag;
+    X_old[i]=temp;
+  }
+
+
+}
 //calc_force= -dV/dx
 
 
