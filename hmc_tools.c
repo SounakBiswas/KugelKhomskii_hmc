@@ -11,20 +11,21 @@ void generate_fields(){
   MDx(RC,phiC);
 }
 //
-//void measure(){
-//  int i;
-//  int j;
-//  int nbr;
-//  double corr_conf=0;
-//  for(i=0;i<M;i++){
-//    for(j=0;j<nsites;j++){
-//      nbr=(j+1)%lx;
-//      corr_conf+=2*(Xu[i*nsites+j]*Ru[i*nsites+nbr]+Xu[i*nsites+nbr]*Ru[i*nsites+j]);
-//    }
-//  }
-//  corr_fn+=corr_conf/(double)(1.0*MCS*M*nsites);
-//  corr_fn_err+=(corr_conf*corr_conf)/(double)(1.0*MCS*M*M*nsites*nsites);
-//}
+void measure(){
+  int i;
+  int j;
+  int nbr;
+  double corr_conf=0;
+  for(i=0;i<M;i++){
+    for(j=0;j<nsites;j++){
+      nbr=(j+1)%lx;
+      corr_conf+=2*(XA[j*nsites+i].real*RA[j*nsites+i].real+XA[j*nsites+i].imag*RA[j*nsites+i].imag);
+      //corr_conf+=2*(XB[j*nsites+i].real*RB[j*nsites+i].real+XB[j*nsites+i].imag*RB[j*nsites+i].imag);
+    }
+  }
+  corr_fn+=corr_conf/(double)(1.0*MCS*M*nsites);
+  corr_fn_err+=(corr_conf*corr_conf)/(double)(1.0*MCS*M*M*nsites*nsites);
+}
 
 //add -d/dx (phi**(dag) (M**D M)**(-1) phi) to deriv
 //Use X to store (M**D M)**(-1) phi
@@ -96,7 +97,7 @@ void calc_force(double *deriv){
   }
   add_dSphidx(deriv,phiA,XA);
   add_dSphidx(deriv,phiB,XB);
-  add_dSphidx(deriv,phiC,XC);
+  //add_dSphidx(deriv,phiC,XC);
 
 
 }
@@ -116,8 +117,8 @@ double calc_energy(double *p,double *x){
   zdotc(&c1,&nf, phiB, &ione, XB, &ione);
   energy+=c1.real;
 
-  zdotc(&c1,&nf, phiC, &ione, XC, &ione);
-  energy+=c1.real;
+  //zdotc(&c1,&nf, phiC, &ione, XC, &ione);
+  //energy+=c1.real;
   return energy;
 
 }
@@ -143,8 +144,8 @@ void hamiltonian_evolution(int ifmeasure){
 
   //measure
 
-  //if(ifmeasure)
-  //  measure();
+  if(ifmeasure)
+    measure();
 
   daxpy(&nf, &dtby2, dVdx, &ione, p_mom, &ione );
   //X =O**(-1) Phi

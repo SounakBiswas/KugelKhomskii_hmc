@@ -5,10 +5,10 @@
 #define U 1.0
 #define LX 4
 #define NSITES LX
-#define BETA 1
+#define BETA 1.0
 #define T_FL 0.1
 #define WUP 100
-#define MCS 10000
+#define MCS 1000
 #define IFPRECON 1
 #define zcsrsymv mkl_cspblas_zcsrsymv
 #define zcsrgemv mkl_cspblas_zcsrgemv

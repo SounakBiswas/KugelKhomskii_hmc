@@ -47,12 +47,24 @@ void main(){
   //fclose(fp);
   update_sparse();
   for(i=0;i<WUP;i++){
+    if(i%50==0)
     printf("%d\n",i);
     generate_fields();
     //printf("gen fields done\n");
     hamiltonian_evolution(0);
   }
+  printf("acceptance rate= %f\n", (double)(accept)/(double)(1.0*(WUP)));
   printf("avg cg iterations= %f\n", (double)(cgsteps)/(double)(1.0*(cg_ctr)));
+  for(i=0;i<MCS;i++){
+    if(i%50==0)
+    printf("%d\n",i);
+    generate_fields();
+    //printf("gen fields done\n");
+    hamiltonian_evolution(1);
+  }
+  printf("avg cg iterations= %f\n", (double)(cgsteps)/(double)(1.0*(cg_ctr)));
+  printf("acceptance rate= %f\n", (double)(accept)/(double)(1.0*(MCS+WUP)));
+  printf("corr_fn= : %f %f\n", corr_fn,sqrt((corr_fn_err-corr_fn*corr_fn)/MCS));
   //for(i=0; i<nsites; i++){
   //  for(j=0; j<nsites; j++)
   //    printf("%f+i%f\t",dense[i+j*nsites].real,dense[i+j*nsites].imag);
