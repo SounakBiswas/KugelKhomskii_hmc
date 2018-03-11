@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 void generate_fields(){
+  update_sparse();
   rand_norm_vec(p_mom,nf,0.0,onebyroot2);
   rand_norm_cvec(RA,nf,0.0,onebyroot2);
   rand_norm_cvec(RB,nf,0.0,onebyroot2);
@@ -104,17 +105,22 @@ void calc_force(double *deriv){
 
 double calc_energy(double *p,double *x){
   double energy=0;
+  double temp;
   int i;
   dcomplex c1;
   //free parts
-  energy+=0.125*dtau*ddot(&nf, x, &ione, x, &ione) +ddot(&nf, p, &ione, p, &ione);
+   temp=0.125*dtau*ddot(&nf, x, &ione, x, &ione) +ddot(&nf, p, &ione, p, &ione);
+  energy+=temp;
+//  printf("free part=%f\t",temp);
   for(i=0;i<nf;i++)
     aux1_nf[i].real=aux1_nf[i].imag=0;
   //zconj_grad(X,phi);
   zdotc(&c1,&nf, phiA, &ione, XA, &ione);
+  //printf("A part=%f\t",c1.real);
   energy+=c1.real;
 
   zdotc(&c1,&nf, phiB, &ione, XB, &ione);
+  //printf("B part=%f\n",c1.real);
   energy+=c1.real;
 
   //zdotc(&c1,&nf, phiC, &ione, XC, &ione);
@@ -140,7 +146,7 @@ void hamiltonian_evolution(int ifmeasure){
   }
   calc_force(dVdx);
   e_old=calc_energy(p_mom,x_hs);
-  printf("energy old:%f\t",e_old);
+  //printf("energy old:%f\t",e_old);
 
   //measure
 
@@ -175,13 +181,15 @@ void hamiltonian_evolution(int ifmeasure){
   }
   daxpy(&nf, &dt, p_mom, &ione, x_hs, &ione);
   e_new=calc_energy(p_mom,x_hs);
-  printf("energy new:%f\n",e_new);
+  //printf("energy new:%f\t",e_new);
 
   if((genrand_real2() > exp(e_old-e_new))||(e_new!=e_new)){
     dcopy(&nf,pcopy,&ione,p_mom,&ione);
     dcopy(&nf,xcopy,&ione,x_hs,&ione);
+    //printf("not \n");
   }
   else{
+    //printf("accept \n");
     accept++;
   }
 

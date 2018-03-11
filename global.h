@@ -5,11 +5,11 @@
 #define U 1.0
 #define LX 4
 #define NSITES LX
-#define BETA 1.0
+#define BETA 2.0
 #define T_FL 0.1
-#define WUP 100
-#define MCS 1000
-#define IFPRECON 1
+#define WUP 400
+#define MCS 400
+#define IFPRECON 0
 #define zcsrsymv mkl_cspblas_zcsrsymv
 #define zcsrgemv mkl_cspblas_zcsrgemv
 #define dcomplex MKL_Complex16
@@ -48,7 +48,7 @@ double *dVdx;
 //preconditioning
 double *L_pcg;
 double *D_pcg;
-double *aux_pcg;
+dcomplex *aux_pcg;
 double alpha_pcg;
 //* ******** */
 double root2;

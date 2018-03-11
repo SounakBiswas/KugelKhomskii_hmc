@@ -39,7 +39,7 @@ int initialize() {
   givens_param[3]=-1.0;
   givens_param[4]=0.0;
 
-  init_genrand(25);
+  init_genrand(26);
 
   XA=(dcomplex *)malloc(nf*sizeof(dcomplex));
   XB=(dcomplex *)malloc(nf*sizeof(dcomplex));
@@ -62,7 +62,7 @@ int initialize() {
   L_pcg=(double *)malloc(nf*sizeof(double));
   D_pcg=(double *)malloc(nf*sizeof(double));
   x_hs=(double *)malloc(nf*sizeof(double));
-  aux_pcg=(double *)malloc(nf*sizeof(double));
+  aux_pcg=(dcomplex *)malloc(nf*sizeof(dcomplex));
   aux_mtmx_nf=(dcomplex *)malloc(nf*sizeof(dcomplex));
   aux1_nf=(dcomplex *)malloc(nf*sizeof(dcomplex));
   aux2_nf=(dcomplex *)malloc(nf*sizeof(dcomplex));
