@@ -5,11 +5,11 @@
 #define U 1.0
 #define LX 4
 #define NSITES LX
-#define BETA 2.0
-#define T_FL 0.1
-#define WUP 400
-#define MCS 400
-#define IFPRECON 0
+#define BETA 1.0
+#define T_FL 0.2
+#define WUP 100
+#define MCS 100
+#define IFPRECON 1
 #define zcsrsymv mkl_cspblas_zcsrsymv
 #define zcsrgemv mkl_cspblas_zcsrgemv
 #define dcomplex MKL_Complex16

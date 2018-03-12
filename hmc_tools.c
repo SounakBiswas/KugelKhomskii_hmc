@@ -40,8 +40,12 @@ void add_dSphidx(double *deriv, dcomplex *phi, dcomplex *X){
   cgsteps+=zconj_grad(X,phi);
   cg_ctr++;
   //printf("CGdone \n");
-  Mx(X,aux3_nf);
-  Mprimeax(X,aux2_nf);
+  //Mx(X,aux3_nf);
+  //Mprimeax(X,aux2_nf);
+  Mx(X,aux1_nf);
+  P2x(aux1_nf,aux3_nf,acsr_kxb,cols_kxb,rowIndex_kxb);
+
+  P1x(X,aux2_nf,acsr_kxap,cols_kxa,rowIndex_kxa);
 
   for(block=1;block<M;block++){
     for(i=0;i<nsites;i+=2){
@@ -64,7 +68,11 @@ void add_dSphidx(double *deriv, dcomplex *phi, dcomplex *X){
   }
 
 
-  Mprimebx(X,aux2_nf);
+  //Mprimebx(X,aux2_nf);
+  Mx(X,aux3_nf);
+  P1x(X,aux1_nf,acsr_kxa,cols_kxa,rowIndex_kxa);
+  P2x(aux1_nf,aux2_nf,acsr_kxbp,cols_kxb,rowIndex_kxb);
+
 
   for(block=1;block<M;block++){
     for(i=1;i<nsites;i+=2){

@@ -55,7 +55,8 @@ void Mx(dcomplex *x,dcomplex *y){
     zaxpy (&nsites, &one ,x+block*nsites, &ione, y+block*nsites, &ione);
   }
 }
-void Mprimebx(dcomplex *x,dcomplex *y){
+// M- I = P2.P1
+void P1x(dcomplex *x,dcomplex *y,dcomplex *acsr, int *cols, int *rowIndex){
   int block;
   int i;
   int ione=1;
@@ -66,14 +67,12 @@ void Mprimebx(dcomplex *x,dcomplex *y){
   minusone.imag=0.0;
   one.real=1.0;
   one.imag=0.0;
-  zcsrgemv(iftransp, &nsites, acsr_kxa+(M-1)*twonsites, rowIndex_kxa, cols_kxa,x+(M-1)*nsites,aux_ns);
-  zcsrgemv(iftransp, &nsites, acsr_kxbp+(M-1)*twonsites, rowIndex_kxb, cols_kxb,aux_ns,y);
+  zcsrgemv(iftransp, &nsites, acsr+(M-1)*twonsites, rowIndex, cols,x+(M-1)*nsites,y);
   for(block=1;block<M;block++){
-    zcsrgemv (iftransp,&nsites, acsr_kxa+(block-1)*twonsites,rowIndex_kxa, cols_kxa,x+(block-1)*nsites,aux_ns);
-    zcsrgemv (iftransp,&nsites, acsr_kxbp+(block-1)*twonsites,rowIndex_kxb, cols_kxb, aux_ns, y+block*nsites);
+    zcsrgemv (iftransp,&nsites, acsr+(block-1)*twonsites,rowIndex, cols,x+(block-1)*nsites,y+block*nsites);
   }
 }
-void Mprimeax(dcomplex *x,dcomplex *y){
+void P2x(dcomplex *x,dcomplex *y,dcomplex *acsr, int *cols, int *rowIndex){
   int block;
   int i;
   int ione=1;
@@ -84,27 +83,11 @@ void Mprimeax(dcomplex *x,dcomplex *y){
   minusone.imag=0.0;
   one.real=1.0;
   one.imag=0.0;
-  zcsrgemv(iftransp, &nsites, acsr_kxb+(M-1)*twonsites, rowIndex_kxb, cols_kxb,x+(M-1)*nsites,aux_ns);
-  zcsrgemv(iftransp, &nsites, acsr_kxap+(M-1)*twonsites, rowIndex_kxa, cols_kxa,aux_ns,y);
+  zcsrgemv(iftransp, &nsites, acsr+(M-1)*twonsites, rowIndex, cols,x,y);
   for(block=1;block<M;block++){
-    zcsrgemv (iftransp,&nsites, acsr_kxb+(block-1)*twonsites,rowIndex_kxb, cols_kxb,x+(block-1)*nsites,aux_ns);
-    zcsrgemv (iftransp,&nsites, acsr_kxap+(block-1)*twonsites,rowIndex_kxa, cols_kxa, aux_ns, y+block*nsites);
+    zcsrgemv (iftransp,&nsites, acsr+(block-1)*twonsites,rowIndex, cols,x+block*nsites,y+block*nsites);
   }
 }
-//void Mxprime(double*x,double *y,int sigma){
-//  int block;
-//  int i;
-//  int ione=1;
-//  double minusone=-1;
-//  double one=1;
-//  dcsrsymv("L",&nsites, acsr_kxa,rowIndex_kxa, cols_kxa,x+(M-1)*nsites,aux_ns);
-//  dcsrsymv("L",&nsites, acsr_kxb,rowIndex_kxb, cols_kxb,aux_ns,y);
-//  for(block=1;block<M;block++){
-//    dcsrsymv ("L",&nsites, acsr_kxa,rowIndex_kxa, cols_kxa,x+(block-1)*nsites,aux_ns);
-//    dcsrsymv ("L",&nsites, acsr_kxb,rowIndex_kxb, cols_kxb,aux_ns,y+block*nsites);
-//  }
-//}
-
 void MDMx(dcomplex *x,dcomplex *y){
   Mx(x,aux_mtmx_nf);
   MDx(aux_mtmx_nf,y);
