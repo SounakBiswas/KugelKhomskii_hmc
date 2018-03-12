@@ -34,16 +34,19 @@ void main(){
   rand_norm_vec(x_hs,nf,0.0,sqrt(16.0/dtau));
   init_basis();
   init_sparse();
-  printf("wassup \n");
-  FILE*fp;
+  //printf("wassup \n");
+  //FILE*fp;
   //fp=fopen("vecr.dat","r");
   //for(i=0;i<nf;i++)
-  //  fscanf(fp,"%lf\n",&phi[i].real);
+  //  fscanf(fp,"%lf\n",&phiA[i].real);
   //fclose(fp);
   //fp=fopen("veci.dat","r");
   //for(i=0;i<nf;i++)
-  //  //fscanf(fp,"%lf\n",&phi[i].imag);
-  //  phi[i].imag=0;
+  //  fscanf(fp,"%lf\n",&phiA[i].imag);
+  //fclose(fp);
+  //fp=fopen("hs.dat","r");
+  //for(i=0;i<nf;i++)
+  //  fscanf(fp,"%lf\n",&x_hs[i]);
   //fclose(fp);
   update_sparse();
   for(i=0;i<WUP;i++){
@@ -82,8 +85,8 @@ void main(){
   //}
   //getchar();
 
-  for(i=0;i<nf;i++)
-    aux1_nf[i].real=aux1_nf[i].imag=0;
+  //for(i=0;i<nf;i++)
+  //  dVdx[i]=0;
   //MDMx(phi,aux1_nf);
   //printf("enter conj grad\n");
   //dcomplex tvar;
@@ -91,7 +94,7 @@ void main(){
   //double t2=dznrm2(&nf, phi,&ione);
   //printf("%f %f %f\n",t2,tvar.real, tvar.imag);
   //zconj_grad(aux1_nf,phi);
-  //calc_deriv(aux1_nf,phi);
+  //add_dSphidx(dVdx,phiA);
   //hamiltonian_evolution(0);
   //
   //fp=fopen("vect.dat","w");
@@ -100,7 +103,7 @@ void main(){
   //fclose(fp);
   //fp=fopen("vec3.dat","w");
   //for(i=0;i<nf;i++)
-  //  fprintf(fp,"%lf\t%lf\n",aux1_nf[i].real,aux1_nf[i].imag);
+  //  fprintf(fp,"%lf\n",dVdx[i]);
   //fclose(fp);
 }
 
