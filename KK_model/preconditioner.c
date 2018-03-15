@@ -30,8 +30,8 @@ void calc_preconditioner(){
   for(i=0;i<nsites;i++){
     link1=(i+1)%lx;
     link2=(lx+i-1)%lx;
-    temp1=cosh(0.5* dtau* x_hs[M*nsites+link1])*cosh(0.5* dtau* x_hs[M*nsites+link2]);
-    temp2=cosh(0.5* dtau* x_hs[(M-1)*nsites+link1])*cosh(0.5* dtau* x_hs[(M-1)*nsites+link2]);
+    temp1=cosh(0.5* dtau* x_hs[(M-1)*nsites+link1])*cosh(0.5* dtau* x_hs[(M-1)*nsites+link2]);
+    temp2=cosh(0.5* dtau* x_hs[(M-2)*nsites+link1])*cosh(0.5* dtau* x_hs[(M-2)*nsites+link2]);
     D_pcg[(M-1)*nsites+i]=alpha_pcg+temp1*temp1 - temp2*temp2/(1.0 *D_pcg[(M-2)*nsites+i]) - temp1*temp1/(1.0 *D_pcg[i]);
     L_pcg[(M-1)*nsites+i]=temp1/(1.0* D_pcg[i]);
   }
