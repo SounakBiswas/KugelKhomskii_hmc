@@ -6,12 +6,26 @@
 void rand_norm_vec(double *vec,int dim,double mean,double var);
 void make_sparse();
 void init_sparse();
+//simple one d chain
+void make_bonds(){
+  int i;
+  for (i=0;i<nsites; i++){
+    bond2site[i][0]=i;
+    bond2site[i][1]=(i+2)%lx;
+  }
+  for (i=0;i<nsites; i++){
+    site2bond[i][0]=i;
+    site2bond[i][1]=(lx + i - 2)%lx;
+  }
+}
 
 int initialize() {
   lx=LX;
   call=0;
   nsites=NSITES;
+  lambdaprime=LAMBDAPRIME;
   twonsites=2*nsites;
+  nnbonds=NNBONDS;
   beta=BETA;
   dtau=DTAU;
   M=(int)(beta/dtau);
@@ -41,8 +55,10 @@ int initialize() {
 
   init_genrand(26);
 
-  Proj=(double *)malloc(ns*sizeof(int));
-  lambdas=(double *)malloc((nnbonds+1)*sizeof(int));
+  make_bonds();
+
+  Proj=(double *)malloc(nsites*sizeof(double));
+  lambda=(int *)malloc((nnbonds+1)*sizeof(int));
   XA=(dcomplex *)malloc(nf*sizeof(dcomplex));
   XB=(dcomplex *)malloc(nf*sizeof(dcomplex));
   XC=(dcomplex *)malloc(nf*sizeof(dcomplex));
@@ -87,6 +103,17 @@ int initialize() {
 
   //rand_norm_vec(x_hs,nf,0.0,sqrt(2.0/dtau));
   //init_sparse();
+  int i;
+  for(i=0;i<nnbonds;i++)
+    lambda[i]=1;
+
+}
+void update_Projs(){
+  int i;
+  for(i=0;i<nsites;i++)
+    Proj[i]=lambda[site2bond[i][0]]*lambda[site2bond[i][1]];
+  Proj[0]*=lambdaprime;
+  Proj[1]*=lambdaprime;
 
 }
 void init_sparse(){
@@ -169,17 +196,11 @@ void update_sparse(){
       link=(i%2==0)?i:nbr;
       acsr_kxa[j*twonsites+ctr].real=cosh(dtau*x_hs[j*nsites+link]/2.0);
       acsr_kxap[j*twonsites+ctr].real=0.5*dtau*sinh(dtau*x_hs[j*nsites+link]/2.0);
-      //printf("da %d %d %f \n",i,link,acsr_kxa[j*nsites+ctr].real);
-      //printf("cols_kxa %d \n", cols_kxa[ctr]);
-      //printf("rowIndex_kxa %d \n", rowIndex_kxa[ctr]);
 
       nbr=(i%2==1)?(i+1)%lx:(lx+i-1)%lx;
       link=(i%2==1)?i:nbr;
       acsr_kxb[j*twonsites+ctr].real=cosh(dtau*x_hs[j*nsites+link]/2.0);
       acsr_kxbp[j*twonsites+ctr].real=0.5*dtau*sinh(dtau*x_hs[j*nsites+link]/2.0);
-      //printf("db %d %d %f + i %f\n",i,link,acsr_kxb[j*twonsites+ctr].real,acsr_kxb[j*twonsites+ctr].imag);
-      //printf("cols_kxb %d %d \n", ctr, cols_kxb[ctr]);
-      //printf("rowIndex_kxb %d \n", rowIndex_kxb[ctr]);
       ctr++;
 
       nbr=(i%2==0)?(i+1)%lx:(lx+i-1)%lx;
@@ -203,30 +224,10 @@ void update_sparse(){
         acsr_kxb[j*twonsites+ctr].imag=+sinh(dtau*x_hs[j*nsites+link]/2.0);
         acsr_kxbp[j*twonsites+ctr].imag=+dtau*0.5*cosh(dtau*x_hs[j*nsites+link]/2.0);
       }
-      //printf("ob %d %d %f %f\n",i,link,acsr_kxb[j*nsites+ctr].imag,x_hs[j*nsites+link]);
-      //printf("ob %d %d %f + i %f \n",i,link,acsr_kxb[j*twonsites+ctr].real,acsr_kxb[j*twonsites+ctr].imag);
-      //printf("cols_kxb %d %d \n", ctr, cols_kxb[ctr]);
-      //printf("rowIndex_kxb %d \n", rowIndex_kxb[ctr]);
 
       ctr++;
     }
-    //getchar();
   }
-}
-//simple one d chain
-void make_bonds(){
-  int i;
-  for (i=0;i<nsites; i++){
-    bond2site[i][0]=i;
-    bond2site[i][1]=(i+2)%lx;
-  }
-  for (i=0;i<nsites; i++){
-    site2bond[i][0]=i;
-    site2bond[i][0]=(lx + i - 2)%lx;
-  }
-
-
-
 }
 void free_all(){
   int i;

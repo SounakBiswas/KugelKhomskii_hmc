@@ -16,6 +16,7 @@
 void MDx(dcomplex *x,dcomplex *y){
   int block;
   int ione=1;
+  int i;
   char iftransp[1]={'N'};
   dcomplex minusone;
   dcomplex one;
@@ -29,7 +30,12 @@ void MDx(dcomplex *x,dcomplex *y){
     zscal (&nsites, &minusone, y+block*nsites, &ione);
     zaxpy (&nsites, &one, x+block*nsites,&ione, y+block*nsites, &ione);
   }
-  zcsrgemv(iftransp,&nsites, acsr_kxb +(M-1)*twonsites,rowIndex_kxb, cols_kxb, x, aux_ns);
+  //using y as a temp buffer first to enable the projector
+  for(i=0;i <nsites;i++){
+    y[i+(M-1)*nsites].real=Proj[i]*x[i].real;
+    y[i+(M-1)*nsites].imag=Proj[i]*x[i].imag;
+  }
+  zcsrgemv(iftransp,&nsites, acsr_kxb +(M-1)*twonsites,rowIndex_kxb, cols_kxb, y+(M-1)*nsites, aux_ns);
   zcsrgemv(iftransp,&nsites, acsr_kxa +(M-1)*twonsites,rowIndex_kxa, cols_kxa, aux_ns,y+(M-1)*nsites);
   zscal(&nsites, &one, y+(M-1)*nsites, &ione);
   zaxpy(&nsites, &one, x+(M-1)*nsites, &ione, y+(M-1)*nsites, &ione);
@@ -47,6 +53,10 @@ void Mx(dcomplex *x,dcomplex *y){
   one.imag=0.0;
   zcsrgemv(iftransp, &nsites, acsr_kxa+(M-1)*twonsites, rowIndex_kxa, cols_kxa,x+(M-1)*nsites,aux_ns);
   zcsrgemv(iftransp, &nsites, acsr_kxb+(M-1)*twonsites, rowIndex_kxb, cols_kxb,aux_ns,y);
+  for(i=0;i <nsites;i++){
+    y[i].real*=Proj[i];
+    y[i].imag*=Proj[i];
+  }
   zaxpy(&nsites, &one, x, &ione, y, &ione);
   for(block=1;block<M;block++){
     zcsrgemv (iftransp,&nsites, acsr_kxa+(block-1)*twonsites,rowIndex_kxa, cols_kxa,x+(block-1)*nsites,aux_ns);

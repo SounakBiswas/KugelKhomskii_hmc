@@ -2,9 +2,11 @@
 #include "math.h"
 #include "mt19937ar.h"
 #define DTAU 0.1
+#define LAMBDAPRIME 1
 #define U 1.0
 #define LX 4
 #define NSITES LX
+#define NNBONDS LX
 #define BETA 1.0
 #define T_FL 0.2
 #define WUP 100
@@ -21,6 +23,7 @@ double dtby2;
 double twodt;
 int nsites,nf,M;
 int twonsites;
+int lambdaprime;
 double beta;
 double dtau;
 double corr_fn;
@@ -31,6 +34,7 @@ int cg_ctr;
 int lx;
 int call;
 int ione;
+int nnbonds;
 long long int accept;
 double givens_param[5];
 //fields

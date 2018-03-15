@@ -3,6 +3,7 @@
 
 void generate_fields(){
   update_sparse();
+  update_Projs();
   rand_norm_vec(p_mom,nf,0.0,onebyroot2);
   rand_norm_cvec(RA,nf,0.0,onebyroot2);
   rand_norm_cvec(RB,nf,0.0,onebyroot2);
@@ -43,6 +44,16 @@ void add_dSphidx(double *deriv, dcomplex *phi, dcomplex *X){
   //Mx(X,aux3_nf);
   //Mprimeax(X,aux2_nf);
   Mx(X,aux1_nf);
+
+  //apply projectors.
+  /* ***************************** */
+  for(i=0;i<0;i++){
+    aux1_nf[i].real*=Proj[i];
+    aux1_nf[i].real*=Proj[i];
+  
+  }
+  /* ****************************** */
+
   P2x(aux1_nf,aux3_nf,acsr_kxb,cols_kxb,rowIndex_kxb);
 
   P1x(X,aux2_nf,acsr_kxap,cols_kxa,rowIndex_kxa);
@@ -72,6 +83,13 @@ void add_dSphidx(double *deriv, dcomplex *phi, dcomplex *X){
   Mx(X,aux3_nf);
   P1x(X,aux1_nf,acsr_kxa,cols_kxa,rowIndex_kxa);
   P2x(aux1_nf,aux2_nf,acsr_kxbp,cols_kxb,rowIndex_kxb);
+  //apply projectors.
+  /* ***************************** */
+  for(i=0;i<0;i++){
+    aux2_nf[i].real*=Proj[i];
+    aux2_nf[i].real*=Proj[i];
+  
+  }
 
 
   for(block=1;block<M;block++){
@@ -142,6 +160,7 @@ void hamiltonian_evolution(int ifmeasure){
   double e_old,e_new;
   double test;
   update_sparse();
+  update_Projs();
   //make backups in case metropolis fails;
   dcopy(&nf,p_mom,&ione,pcopy,&ione);
   dcopy(&nf,x_hs,&ione,xcopy,&ione);
@@ -154,7 +173,7 @@ void hamiltonian_evolution(int ifmeasure){
   }
   calc_force(dVdx);
   e_old=calc_energy(p_mom,x_hs);
-  //printf("energy old:%f\t",e_old);
+  printf("energy old:%f\t",e_old);
 
   //measure
 
@@ -189,7 +208,7 @@ void hamiltonian_evolution(int ifmeasure){
   }
   daxpy(&nf, &dt, p_mom, &ione, x_hs, &ione);
   e_new=calc_energy(p_mom,x_hs);
-  //printf("energy new:%f\t",e_new);
+  printf("energy new:%f\t",e_new);
 
   if((genrand_real2() > exp(e_old-e_new))||(e_new!=e_new)){
     dcopy(&nf,pcopy,&ione,p_mom,&ione);
