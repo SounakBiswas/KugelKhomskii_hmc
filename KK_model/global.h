@@ -45,6 +45,8 @@ dcomplex *RC;
 double *p_mom;
 double *x_hs;
 double *dVdx;
+double * Proj;
+int *lambda;
 //preconditioning
 double *L_pcg;
 double *D_pcg;
@@ -91,3 +93,5 @@ int *cols_basis;
 int *cols_kxa;
 int *cols_kxb;
 
+int site2bond[NSITES][2];
+int bond2site[NSITES][2];

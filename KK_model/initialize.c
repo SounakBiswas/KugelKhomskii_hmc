@@ -41,6 +41,8 @@ int initialize() {
 
   init_genrand(26);
 
+  Proj=(double *)malloc(ns*sizeof(int));
+  lambdas=(double *)malloc((nnbonds+1)*sizeof(int));
   XA=(dcomplex *)malloc(nf*sizeof(dcomplex));
   XB=(dcomplex *)malloc(nf*sizeof(dcomplex));
   XC=(dcomplex *)malloc(nf*sizeof(dcomplex));
@@ -210,6 +212,21 @@ void update_sparse(){
     }
     //getchar();
   }
+}
+//simple one d chain
+void make_bonds(){
+  int i;
+  for (i=0;i<nsites; i++){
+    bond2site[i][0]=i;
+    bond2site[i][1]=(i+2)%lx;
+  }
+  for (i=0;i<nsites; i++){
+    site2bond[i][0]=i;
+    site2bond[i][0]=(lx + i - 2)%lx;
+  }
+
+
+
 }
 void free_all(){
   int i;
