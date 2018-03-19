@@ -48,11 +48,8 @@ void main(){
   //for(i=0;i<nf;i++)
   //  fscanf(fp,"%lf\n",&x_hs[i]);
   //fclose(fp);
-  update_sparse();
   update_Projs();
-  for(i=0;i<nsites;i++)
-    printf("%f\t",Proj[i]);
-  getchar();
+  update_sparse();
 
   for(i=0;i<WUP;i++){
     if(i%50==0)

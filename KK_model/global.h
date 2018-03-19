@@ -11,6 +11,7 @@
 #define T_FL 0.2
 #define WUP 100
 #define MCS 100
+#define RECAL=5
 #define IFPRECON 1
 #define zcsrsymv mkl_cspblas_zcsrsymv
 #define zcsrgemv mkl_cspblas_zcsrgemv
@@ -21,6 +22,7 @@ int M;
 double dt;
 double dtby2;
 double twodt;
+int recal;
 int nsites,nf,M;
 int twonsites;
 int lambdaprime;
@@ -90,6 +92,9 @@ dcomplex *acsr_kxb;
 dcomplex *acsr_kxbp;
 dcomplex *acsr_kxap;
 dcomplex *acsr_basis;
+
+dcomplex *Gr1;
+dcomplex *Gr2;
 int *rowIndex_kxa;
 int *rowIndex_kxb;
 int *rowIndex_basis;

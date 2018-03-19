@@ -115,6 +115,25 @@ void zdrotm(dcomplex *X, dcomplex *X_old, double* givens_param){
 
 }
 //calc_force= -dV/dx
+void invert_matrix(double *A,int dim){
+  double *work = NULL;
+  int lwork, info;
+  int *ipiv;
+  ipiv=(int*)malloc(dim*sizeof(int));
+
+  dgetrf_(&dim,&dim,A,&dim,ipiv,&info);
+  work = (double *)malloc(1*sizeof(double));
+  lwork = -1;
+  dgetri_(&dim, A, &dim, ipiv,  work, &lwork, &info);
+  lwork = work[0];
+  free(work);
+  work = (double *)malloc(lwork*sizeof(double));
+  dgetri_(&dim, A, &dim, ipiv,  work, &lwork, &info);
+  free(work);
+  free(ipiv);
+
+
+}
 
 
 

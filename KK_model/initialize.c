@@ -22,6 +22,7 @@ void make_bonds(){
 int initialize() {
   lx=LX;
   call=0;
+  recal=RECAL;
   nsites=NSITES;
   lambdaprime=LAMBDAPRIME;
   twonsites=2*nsites;
@@ -65,6 +66,9 @@ int initialize() {
   XA_old=(dcomplex*)malloc(nf*sizeof(dcomplex));
   XB_old=(dcomplex*)malloc(nf*sizeof(dcomplex));
   XC_old=(dcomplex*)malloc(nf*sizeof(dcomplex));
+
+  Gr1=(dcomplex*)malloc(nsites*nsites*sizeof(dcomplex));
+  Gr2=(dcomplex*)malloc(nsites*nsites*sizeof(dcomplex));
 
   phiA=(dcomplex *)malloc(nf*sizeof(dcomplex));
   phiB=(dcomplex *)malloc(nf*sizeof(dcomplex));
