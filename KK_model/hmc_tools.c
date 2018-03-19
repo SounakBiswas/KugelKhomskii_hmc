@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 void generate_fields(){
-  update_sparse();
   update_Projs();
+  update_sparse();
   rand_norm_vec(p_mom,nf,0.0,onebyroot2);
   rand_norm_cvec(RA,nf,0.0,onebyroot2);
   rand_norm_cvec(RB,nf,0.0,onebyroot2);
@@ -159,8 +159,8 @@ void hamiltonian_evolution(int ifmeasure){
   int i;
   double e_old,e_new;
   double test;
-  update_sparse();
   update_Projs();
+  update_sparse();
   //make backups in case metropolis fails;
   dcopy(&nf,p_mom,&ione,pcopy,&ione);
   dcopy(&nf,x_hs,&ione,xcopy,&ione);
@@ -208,7 +208,7 @@ void hamiltonian_evolution(int ifmeasure){
   }
   daxpy(&nf, &dt, p_mom, &ione, x_hs, &ione);
   e_new=calc_energy(p_mom,x_hs);
-  printf("energy new:%f\t",e_new);
+  printf("energy new:%f\n",e_new);
 
   if((genrand_real2() > exp(e_old-e_new))||(e_new!=e_new)){
     dcopy(&nf,pcopy,&ione,p_mom,&ione);
