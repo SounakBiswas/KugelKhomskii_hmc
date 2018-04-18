@@ -28,6 +28,13 @@ void measure(){
   corr_fn+=corr_conf/(double)(1.0*MCS*M*nsites);
   corr_fn_err+=(corr_conf*corr_conf)/(double)(1.0*MCS*M*M*nsites*nsites);
 }
+void update_phis(){
+  cgsteps+=zconj_grad(XA,phiA);
+  cgsteps+=zconj_grad(XB,phiB);
+  cgsteps+=zconj_grad(XC,phiC);
+  cgsteps+=3;
+
+}
 
 //add -d/dx (phi**(dag) (M**D M)**(-1) phi) to deriv
 //Use X to store (M**D M)**(-1) phi
@@ -38,8 +45,8 @@ void add_dSphidx(double *deriv, dcomplex *phi, dcomplex *X){
   int sigma=1;
   //printf("entered dSphidx \n");
   dcomplex c1,c2;
-  cgsteps+=zconj_grad(X,phi);
-  cg_ctr++;
+  //cgsteps+=zconj_grad(X,phi);
+  //cg_ctr++;
   //printf("CGdone \n");
   //Mx(X,aux3_nf);
   //Mprimeax(X,aux2_nf);
@@ -124,7 +131,7 @@ void calc_force(double *deriv){
   }
   add_dSphidx(deriv,phiA,XA);
   add_dSphidx(deriv,phiB,XB);
-  //add_dSphidx(deriv,phiC,XC);
+  add_dSphidx(deriv,phiC,XC);
 
 
 }
@@ -149,8 +156,8 @@ double calc_energy(double *p,double *x){
   //printf("B part=%f\n",c1.real);
   energy+=c1.real;
 
-  //zdotc(&c1,&nf, phiC, &ione, XC, &ione);
-  //energy+=c1.real;
+  zdotc(&c1,&nf, phiC, &ione, XC, &ione);
+  energy+=c1.real;
   return energy;
 
 }
@@ -171,6 +178,7 @@ void hamiltonian_evolution(int ifmeasure){
     XB[i].real=XB[i].imag=0.0;
     XC[i].real=XC[i].imag=0.0;
   }
+  update_phis();
   calc_force(dVdx);
   e_old=calc_energy(p_mom,x_hs);
   printf("energy old:%f\t",e_old);
@@ -197,6 +205,7 @@ void hamiltonian_evolution(int ifmeasure){
       zdrotm( XB,  XB_old,  givens_param);
       zdrotm( XC,  XC_old,  givens_param);
     }
+    update_phis();
     calc_force(dVdx);
     daxpy(&nf, &dt, dVdx, &ione, p_mom, &ione);
     if(i==0){

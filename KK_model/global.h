@@ -11,7 +11,7 @@
 #define T_FL 0.2
 #define WUP 100
 #define MCS 100
-#define RECAL=5
+#define RECAL 5
 #define IFPRECON 1
 #define zcsrsymv mkl_cspblas_zcsrsymv
 #define zcsrgemv mkl_cspblas_zcsrgemv

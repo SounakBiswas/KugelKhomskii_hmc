@@ -60,6 +60,7 @@ void cg_update(){
   double eold,enew;
   update_Projs();
   update_sparse();
+  update_phis();
   eold=calc_energy(p_mom,x_hs);
   //loop over bonds
 
@@ -67,6 +68,7 @@ void cg_update(){
     lambda[i]*=-1;
     update_Projs();
     update_sparse();
+    update_phis();
     enew=calc_energy(p_mom,x_hs);
     if(genrand_real2()>exp(eold-enew)){
       //revert
